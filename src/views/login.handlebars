@@ -1,0 +1,50 @@
+{{!-- <form method="POST" action="/api/sessions/login">
+  <label for="email">Email</label>
+  <input type="email" name="email" required />
+  <label for="password">Password</label>
+  <input type="password" name="password" required />
+  <button type="submit">Login</button>
+</form> --}}
+
+<main>
+  <form
+    id="login_form"
+    class="form_class"
+    action="/api/sessions/login"
+    method="POST"
+  >
+    <div class="form_div">
+      <label 
+        for="email">Email:</label>
+      <input
+        class="field_class"
+        name="email"
+        type="email"
+        placeholder="Ingresa tu correo"
+        required
+      />
+      <label 
+        for="password">Password:</label>
+      <input
+        id="pass"
+        class="field_class"
+        name="password"
+        type="password"
+        placeholder="Ingresa tu password"
+        required
+      />
+      <button
+        class="submit_class"
+        type="submit"
+      >Entrar</button>
+    </div>
+    <div class="info_div">
+      <p>Login con 
+        <a href="/api/sessions/github">Github</a></p>
+    </div>
+    <div class="info_div">
+      <p>Registrarse como usuario
+        <a href="/register">aquí!</a></p>
+    </div>
+  </form>
+</main>

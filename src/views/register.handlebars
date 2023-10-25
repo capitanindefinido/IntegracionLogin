@@ -1,0 +1,66 @@
+<main>
+  <form
+    id="login_form"
+    class="form_class"
+    action="/api/sessions/register"
+    method="POST"
+  >
+    <div class="form_div">
+      <label for="first_name">Nombre:</label>
+      <input
+        class="field_class"
+        name="first_name"
+        type="text"
+        placeholder="Ingresa tu nombre"
+        autofocus
+        required
+      />
+      <label for="last_name">Apellido:</label>
+      <input
+        class="field_class"
+        name="last_name"
+        type="text"
+        placeholder="Ingresa tu apellido"
+        autofocus
+        required
+      />
+      <label for="email">Email:</label>
+      <input
+        class="field_class"
+        name="email"
+        type="email"
+        placeholder="Ingresa tu email"
+        autofocus
+        required
+      />
+      <label for="age">Edad:</label>
+      <input
+        class="field_class"
+        name="age"
+        type="text"
+        placeholder="Ingresa tu edad"
+        autofocus
+        required
+      />
+      <label for="password">Contraseña:</label>
+      <input
+        class="field_class"
+        name="password"
+        type="password"
+        placeholder="Ingresa tu contraseña"
+        autofocus
+        required
+      />
+      <select name="rol" id="rol">
+        <option value="admin">Admin</option>
+        <option value="usuario">Usuario</option>
+      </select>
+
+      <button
+        class="submit_class"
+        type="submit"
+        form="login_form"
+      >Registrarse</button>
+    </div>
+  </form>
+</main>
