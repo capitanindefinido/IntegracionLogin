@@ -1,8 +1,6 @@
-import {promises as fs} from 'fs'
-import {nanoid} from "nanoid"
-import { productsModel } from '../models/products.model.js'
+import { productsModel } from "../../models/products.model.js";
 
-class ProductManager extends productsModel
+class ProductDaoMongo extends productsModel
 {
     constructor() {
         super();
@@ -26,7 +24,7 @@ class ProductManager extends productsModel
       {
         try 
         {
-          const product = await ProductManager.findById(id);   
+          const product = await ProductDaoMongo.findById(id);   
           if (!product) {
             return 'Producto no encontrado';
           } 
@@ -46,7 +44,7 @@ class ProductManager extends productsModel
       {
         try 
         {
-          const products = await ProductManager.find({});
+          const products = await ProductDaoMongo.find({});
           return products;
         } catch (error) {
           console.error('Error al obtener los productos:', error);
@@ -61,7 +59,7 @@ class ProductManager extends productsModel
         {
           //La propiedad lean() arregla el error own properties que se muestra al momento de querer mostrar datos desde mongoose, ya que,
           //viene con propiedades propias de mongoose y lean() se las quita para quedar solo el json
-          const product = await ProductManager.findById(id).lean();    
+          const product = await ProductDaoMongo.findById(id).lean();    
           if (!product) 
           {
             return 'Producto no encontrado';
@@ -78,7 +76,7 @@ class ProductManager extends productsModel
       {
         try 
         {
-          const products = await ProductManager.find().limit(limit); // Aplica el límite a la consulta
+          const products = await ProductDaoMongo.find().limit(limit); // Aplica el límite a la consulta
           if (products.length < limit) {
             // Si es menor, ajusta el límite para que coincida con el número de productos disponibles
             limit = products.length;
@@ -95,7 +93,7 @@ class ProductManager extends productsModel
           page = 1; // Establece la página predeterminada en 1 si el número de página es menor o igual a 0
         }
         try {
-          const products = await ProductManager.find()
+          const products = await ProductDaoMongo.find()
             .skip((page - 1) * productsPerPage) // Omite los productos de las páginas anteriores
             .limit(productsPerPage); // Limita la consulta a la cantidad de productos por página
           return products;
@@ -161,14 +159,14 @@ class ProductManager extends productsModel
           }
 
           // Realiza la consulta utilizando el filtro y la paginación
-          const query = ProductManager.find(filter)
+          const query = ProductDaoMongo.find(filter)
             .skip(startIndex)
             .limit(limit)
             .sort(sortOptions); ;
           const products = await query.exec();
 
         // Calcula el total de páginas y otros detalles de paginación
-        const totalProducts = await ProductManager.countDocuments(filter);
+        const totalProducts = await ProductDaoMongo.countDocuments(filter);
         const totalPages = Math.ceil(totalProducts / limit);
         const hasPrevPage = startIndex > 0;
         const hasNextPage = endIndex < totalProducts;
@@ -200,7 +198,7 @@ class ProductManager extends productsModel
       {
         try 
         {
-          const product = await ProductManager.findById(id);  
+          const product = await ProductDaoMongo.findById(id);  
           if (!product) {
             return 'Producto no encontrado';
           }
@@ -213,4 +211,4 @@ class ProductManager extends productsModel
         }
       }
 }
-export default ProductManager;
+export default ProductDaoMongo;

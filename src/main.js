@@ -1,9 +1,8 @@
 import express from "express"
 import prodRouter from "./router/product.routes.js"
 import cartRouter from "./router/cart.routes.js"
-import ProductManager from "./controllers/ProductManager.js"
-import CartManager from "./controllers/CartManager.js"
-import mongoose from "mongoose"
+import ProductDaoMongo from "./DAO/Mongo/ProductDaoMongo.js"
+import CartDaoMongo from "./DAO/Mongo/CartDaoMongo.js"
 import { engine } from "express-handlebars"
 import * as path from "path"
 import __dirname from "./utils.js"
@@ -13,42 +12,26 @@ import session from 'express-session'
 import FileStore from 'session-file-store'
 import passport from "passport"
 import initializePassword from "./config/passport.config.js"
+import configObject from "./config/config.js"
 
-//El funcionamiento se valido con la extensión Thunder Client desde Visual Studio Code
-//Actualmente el proyecto se ejecuta desde el ingreso del  Login http://localhost:4000/login
 const app = express()
-//Se define puerto 8080 para ejecutar la aplicacion
-const PORT = 4000
 const fileStorage = FileStore(session)
-const product = new ProductManager()
-const cart = new CartManager()
+const product = new ProductDaoMongo()
+const cart = new CartDaoMongo()
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
-app.listen(PORT, () => {
-    console.log(`Servidor Express Puerto ${PORT}`)
+app.listen(configObject.port, () => {
+  console.log(`Servidor Express Puerto ${configObject.port}`)
 })
-//-------------------------------------Mongoose----------------------------------------------------------//
-mongoose
-  .connect(
-    "mongodb+srv://admin:admin@cluster0.es3hczs.mongodb.net/?retryWrites=true&w=majority"
-  )
-  .then(() => {
-    console.log("Conectado a la base de datos");
-  })
-  .catch((error) => {
-    console.error("Error al conectarse a la base de datos, error" + error);
-  });
-
 //-----------------------------Session Mongo Atlas-----------------------------------------//
-
 app.use(
     session({
       //Session registrada en mongo atlas
       store: MongoStore.create({
         mongoUrl:
-          "mongodb+srv://admin:admin@cluster0.es3hczs.mongodb.net/?retryWrites=true&w=majority",
+        `${configObject.mongo_url}/?retryWrites=true&w=majority`,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
         ttl: 3600,
       }),
@@ -77,7 +60,6 @@ app.set("views", path.resolve(__dirname + "/views"))
 
 //CSS Static
 app.use("/", express.static(__dirname + "/public"))
-
 
 //Ingreso Products http://localhost:4000/products
 app.get("/products", async (req, res) => {

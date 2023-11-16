@@ -1,12 +1,9 @@
-import {promises as fs} from 'fs'
-import {nanoid} from "nanoid"
-import { cartsModel } from '../models/carts.model.js'
-import ProductManager from './ProductManager.js'
+import { cartsModel } from "../../models/carts.model.js";
+import ProductDaoMongo from "./ProductDaoMongo.js";
 
-//Se accede a funciones de ProductManager definiendo prodAll
-const prodAll = new ProductManager()
+const prodAll = new ProductDaoMongo()
 
-class CartManager extends cartsModel
+class CartDaoMongo extends cartsModel
 {
     constructor() {
         super();
@@ -15,7 +12,7 @@ class CartManager extends cartsModel
     {
         try 
         {
-          const carts = await CartManager.find({})
+          const carts = await CartDaoMongo.find({})
           .populate({
             path: "products.productId", // Rellenar la referencia "productId" en "products"
             model: "products", // Nombre del modelo al que hacer referencia
@@ -208,4 +205,4 @@ class CartManager extends cartsModel
         }
       }     
 }
-export default CartManager
+export default CartDaoMongo

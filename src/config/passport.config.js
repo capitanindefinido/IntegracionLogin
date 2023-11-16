@@ -1,11 +1,11 @@
 import passport from "passport";
 import local from "passport-local";
 import { createHash, isValidPassword } from "../utils.js";
-import UserManager from "../controllers/UserManager.js";
+import UserDaoMongo from "../DAO/Mongo/UserDaoMongo.js";
 import GitHubStrategy from "passport-github2";
 
 const LocalStrategy = local.Strategy;
-const userMan = new UserManager();
+const userMan = new UserDaoMongo();
 const initializePassword = () => {
   passport.use(
     "register",

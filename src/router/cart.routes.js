@@ -1,61 +1,26 @@
 import { Router } from "express"
-import CartManager from "../controllers/CartManager.js"
+import CartController from "../controllers/carts.controller.js"
 
 const cartRouter = Router()
-const carts = new CartManager()
 
-//Se agrega producto http://localhost:8080/api/carts con post donde nos ingresa un id y un producto con arreglo vacio
-cartRouter.post("/", async (req,res) =>{
-    let newCart = req.body
-    res.send(await carts.addCart(newCart))
-})
-//Traemos todos los carritos con http://localhost:8080/api/carts con get
-cartRouter.get("/", async (req,res)=>{
-    res.send(await carts.getCarts())
-})
-//Traemos el carro por id con http://localhost:8080/api/carts/idCarts con get
-cartRouter.get("/:id", async (req,res)=>{
-    res.send(await carts.getCartById(req.params.id))
-})
+const {postCart, getCarts, getCartById, postProductsInCart, deleteProductsFromCart, putProductsInCart, putProductInCart, deleteAllProductsFromCart, getCartWithProducts} = new CartController()
 
-//Ingresamos el producto al carrito con el siguiente formato http://localhost:8080/api/carts/idCarts/products/idProd con post
-cartRouter.post("/:cid/products/:pid", async (req,res) => {
-    let cartId = req.params.cid
-    let prodId = req.params.pid
-    res.send(await carts.addProductInCart(cartId, prodId))
-})
+cartRouter.post("/", postCart)
 
-//Eliminar el producto al carrito con el siguiente formato http://localhost:8080/api/carts/idCarts/products/idProd con delete
-cartRouter.delete("/:cid/products/:pid", async (req,res) => {
-    let cartId = req.params.cid
-    let prodId = req.params.pid
-    res.send(await carts.removeProductFromCart(cartId, prodId))
-})
+cartRouter.get("/", getCarts)
 
-//Actualizar el carro con varios productos con el siguiente formato http://localhost:8080/api/carts/idCarts con put
-cartRouter.put("/:cid", async (req,res) => {
-    let cartId = req.params.cid
-    let newProducts = req.body
-    res.send(await carts.updateProductsInCart(cartId, newProducts))
-})
+cartRouter.get("/:id", getCartById)
 
-//Actualizar el carro con varios productos con el siguiente formato http://localhost:8080/api/carts/idCarts con put
-cartRouter.put("/:cid/products/:pid", async (req,res) => {
-    let cartId = req.params.cid
-    let prodId = req.params.pid
-    let newProduct = req.body
-    res.send(await carts.updateProductInCart(cartId, prodId, newProduct))
-})
-//Eliminar todos los productos del carro http://localhost:8080/api/carts/idCarts con delete
-cartRouter.delete("/:cid", async (req,res) => {
-    let cartId = req.params.cid
-    res.send(await carts.removeAllProductsFromCart(cartId))
-})
-//Population
-//Traemos todos los carritos con http://localhost:8080/api/carts con get
-cartRouter.get("/population/:cid", async (req,res)=>{
-    let cartId = req.params.cid
-    res.send(await carts.getCartWithProducts(cartId))
-})
+cartRouter.post("/:cid/products/:pid", postProductsInCart)
+
+cartRouter.delete("/:cid/products/:pid", deleteProductsFromCart)
+
+cartRouter.put("/:cid", putProductsInCart)
+
+cartRouter.put("/:cid/products/:pid", putProductInCart)
+
+cartRouter.delete("/:cid", deleteAllProductsFromCart)
+
+cartRouter.get("/population/:cid", getCartWithProducts)
 
 export default cartRouter

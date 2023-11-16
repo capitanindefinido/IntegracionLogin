@@ -1,8 +1,6 @@
-import {promises as fs} from 'fs'
-import {nanoid} from "nanoid"
-import { usersModel } from '../models/users.model.js'
+import { usersModel } from "../../models/users.model.js";
 
-class UserManager extends usersModel
+class UserDaoMongo extends usersModel
 {
     constructor() {
         super();
@@ -26,7 +24,7 @@ class UserManager extends usersModel
       {
         try 
         {
-          const user = await UserManager.findById(id);   
+          const user = await UserDaoMongo.findById(id);   
           if (!user) {
             return 'Usuario no encontrado';
           } 
@@ -46,7 +44,7 @@ class UserManager extends usersModel
       {
         try 
         {
-          const users = await UserManager.find({});
+          const users = await UserDaoMongo.find({});
           return users;
         } catch (error) {
           console.error('Error al obtener los usuarios:', error);
@@ -61,7 +59,7 @@ class UserManager extends usersModel
         {
           //La propiedad lean() arregla el error own properties que se muestra al momento de querer mostrar datos desde mongoose, ya que,
           //viene con propiedades propias de mongoose y lean() se las quita para quedar solo el json
-          const user = await UserManager.findById(id).lean();    
+          const user = await UserDaoMongo.findById(id).lean();    
           if (!user) 
           {
             return 'Usuario no encontrado';
@@ -77,7 +75,7 @@ class UserManager extends usersModel
       {
         try 
         {
-          const user = await UserManager.findById(id);  
+          const user = await UserDaoMongo.findById(id);  
           if (!user) {
             return 'Usuario no encontrado';
           }
@@ -91,7 +89,7 @@ class UserManager extends usersModel
       }
       async findUser(email) {
         try {
-          const user = await UserManager.findOne({ email }, { email: 1, first_name: 1, last_name: 1, password: 1, rol:1 });
+          const user = await UserDaoMongo.findOne({ email }, { email: 1, first_name: 1, last_name: 1, password: 1, rol:1 });
       
           if (!user) {
             return "Usuario no encontrado";
@@ -105,7 +103,7 @@ class UserManager extends usersModel
       }
       async findEmail(param) {
         try {
-          const user = await UserManager.findOne(param)    
+          const user = await UserDaoMongo.findOne(param)    
           return user
         } catch (error) {
           console.error('Error al validar usuario', error);
@@ -114,4 +112,4 @@ class UserManager extends usersModel
       }
       
 }
-export default UserManager;
+export default UserDaoMongo;
