@@ -21,11 +21,14 @@ const cart = new CartDaoMongo()
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+//---------------------------Puerto------------------------------------//
 
 app.listen(configObject.port, () => {
   console.log(`Servidor Express Puerto ${configObject.port}`)
 })
-//-----------------------------Session Mongo Atlas-----------------------------------------//
+
+//-----------------------Session Mongo Atlas---------------------------//
+
 app.use(
     session({
       //Session registrada en mongo atlas
@@ -40,28 +43,26 @@ app.use(
       saveUninitialized: false,
     })
   );
-//Passport//
-initializePassword()
-app.use(passport.initialize())
-app.use(passport.session())
-//End Passport//
-//-------------------------------------------------------------------------------------//
-//Se simplifica codigo de middleware colocando lo siguiente
-//IMPORTANTE COLOCAR LAS RUTAS DESPUES DE QUE SE CREE LA SESION PORQUE SI NO, NO FUNCIONA EL REQ.SESSION
+
+//---------------------------Rutas------------------------------------//
+
 app.use("/api/products", prodRouter)
 app.use("/api/carts", cartRouter)
 app.use("/api/sessions", userRouter)
 
-//-----Handlebars-----//
+//------------------------Passport------------------------------------//
+
+initializePassword()
+app.use(passport.initialize())
+app.use(passport.session())
+
 //------------------------Handlebars----------------------------------//
 app.engine("handlebars", engine())
 app.set("view engine", "handlebars")
 app.set("views", path.resolve(__dirname + "/views"))
 
-//CSS Static
 app.use("/", express.static(__dirname + "/public"))
 
-//Ingreso Products http://localhost:4000/products
 app.get("/products", async (req, res) => {
     if (!req.session.emailUsuario) 
     {
@@ -84,20 +85,17 @@ app.get("/carts/:cid", async (req, res) => {
         carts : allCarts
     });
 })
-//Ingreso Login http://localhost:4000/login
 app.get("/login", async (req, res) => {
     res.render("login", {
         title: "Vista Login",
     });
     
 })
-//Ingreso Register http://localhost:4000/register
 app.get("/register", async (req, res) => { 
     res.render("register", {
         title: "Vista Register",
     });
 })
-//Ingreso Profile http://localhost:4000/profile
 app.get("/profile", async (req, res) => { 
     if (!req.session.emailUsuario) 
     {
@@ -112,7 +110,6 @@ app.get("/profile", async (req, res) => {
 
     });
 })
-//Solicitado en la anterior revision por tutor
 app.get("/", async (req, res) => { 
     if (!req.session.emailUsuario) 
     {
