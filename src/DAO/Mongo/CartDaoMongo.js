@@ -211,7 +211,8 @@ class CartDaoMongo extends cartsModel
       async purchaseCart(cartId, user) {
         try {
             const cart = await cartsModel.findById(cartId);
-    
+            /* let cartString = JSON.stringify(cart)
+            let cartJson = JSON.parse(cartString) */
             if (!cart) {
                 return { error: 'Carrito no encontrado' };
             }
@@ -222,29 +223,29 @@ class CartDaoMongo extends cartsModel
               try {
                   let prod = JSON.stringify(cartItem)
                   let prodJson = JSON.parse(prod)
-          
-                  let product = await prodAll.getProductById(prodJson.product);
+                  let prodId = prodJson.productId
+                  let product = await prodAll.getProductById(prodId);
                   if (!product) {
-                      console.error(`Error al procesar el producto ${prodJson.product}: Producto no encontrado`);
-                      productsNotPurchased.push(prodJson.product);
+                      console.error(`Error al procesar el producto ${prodId}: Producto no encontrado`);
+                      productsNotPurchased.push(prodId);
                   } else {
                       if (prodJson.quantity > product.stock) {
                           productsNotPurchased.push(product);
                       } else {
                           product.stock -= prodJson.quantity;
-                          await prodAll.updateProduct(prodJson.product, product);
+                          await prodAll.updateProduct(prodId, product);
                       }
                   }
                   montoTotal += product.price * prodJson.quantity
+                  await this.removeProductFromCart(cartId, prodId);
               } catch (error) {
                   let prod = JSON.stringify(cartItem)
                   let prodJson = JSON.parse(prod)
-                  console.error(`Error al procesar el producto ${prodJson.product}:`, error);
-                  productsNotPurchased.push(prodJson.product);
+                  let prodId = prodJson.productId
+                  console.error(`Error al procesar el producto ${prodId}:`, error);
+                  productsNotPurchased.push(prodId);
               }
             }
-            console.log(productsNotPurchased.length)
-            console.log(user)
             if (productsNotPurchased.length > 0) {
               const date = new Date(); 
               const totalAmount = montoTotal; 
@@ -260,7 +261,7 @@ class CartDaoMongo extends cartsModel
               console.log(ticket)
               cart.status = 'completed';
               await cart.save();
-          
+              
               return ticket;
             }else{
               cart.status = 'completed';

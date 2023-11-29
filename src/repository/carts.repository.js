@@ -11,7 +11,7 @@ class CartRepository {
     }
 
     async addCart(cartData){
-        const newCart = CartDto(cartData)
+        const newCart = new CartDto(cartData)
         return await this.dao.addCart(newCart)
     }
 
