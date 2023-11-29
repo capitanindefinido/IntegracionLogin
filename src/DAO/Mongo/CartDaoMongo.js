@@ -1,3 +1,4 @@
+import UserDto from "../../dto/users.dto.js";
 import { cartsModel } from "../../models/carts.model.js";
 import ProductDaoMongo from "./ProductDaoMongo.js";
 import TicketDaoMongo from "./TicketDaoMongo.js";
@@ -207,7 +208,7 @@ class CartDaoMongo extends cartsModel
         }
       }    
       
-      async purchaseCart(cartId) {
+      async purchaseCart(cartId, user) {
         try {
             const cart = await cartsModel.findById(cartId);
     
@@ -216,51 +217,58 @@ class CartDaoMongo extends cartsModel
             }
     
             const productsNotPurchased = [];
-    
+            let montoTotal = 0
             for (const cartItem of cart.products) {
               try {
-                  let productId;
                   let prod = JSON.stringify(cartItem)
                   let prodJson = JSON.parse(prod)
           
-                  const product = await prodAll.getProductById(prodJson.product);
-          
+                  let product = await prodAll.getProductById(prodJson.product);
                   if (!product) {
                       console.error(`Error al procesar el producto ${prodJson.product}: Producto no encontrado`);
                       productsNotPurchased.push(prodJson.product);
                   } else {
-                      if (cartItem.quantity > product.stock) {
-                          productsNotPurchased.push(prodJson.product);
+                      if (prodJson.quantity > product.stock) {
+                          productsNotPurchased.push(product);
                       } else {
-                          product.stock -= cartItem.quantity;
-                          await prodAll.updateProduct(product.id, product);
+                          product.stock -= prodJson.quantity;
+                          await prodAll.updateProduct(prodJson.product, product);
                       }
                   }
+                  montoTotal += product.price * prodJson.quantity
               } catch (error) {
+                  let prod = JSON.stringify(cartItem)
+                  let prodJson = JSON.parse(prod)
                   console.error(`Error al procesar el producto ${prodJson.product}:`, error);
                   productsNotPurchased.push(prodJson.product);
               }
             }
-          
+            console.log(productsNotPurchased.length)
+            console.log(user)
             if (productsNotPurchased.length > 0) {
-              const date = new Date(); // Obten la fecha actual
-              const totalAmount = calculateTotalAmount(productsNotPurchased); // Implementa la lógica para calcular el monto total
+              const date = new Date(); 
+              const totalAmount = montoTotal; 
               const ticketData = {
                 date,
                 amount: totalAmount,
-                purchaser: cart.userId,
+                purchaser: user.first_name,
                 products: productsNotPurchased.map(item => item.productId),
               };
         
               // Crear un ticket con los productos no comprados
-              await ticketAll.createTicket(ticketData);
+              const ticket = await ticketAll.createTicket(ticketData);
+              console.log(ticket)
+              cart.status = 'completed';
+              await cart.save();
+          
+              return ticket;
+            }else{
+              cart.status = 'completed';
+              await cart.save();
+          
+              return productsNotPurchased;
             }
-        
-            // Actualizar el estado del carrito
-            cart.status = 'completed';
-            await cart.save();
-        
-            return productsNotPurchased;
+            
         } catch (error) {
             console.error('Error al finalizar la compra:', error);
             return { error: 'Error al finalizar la compra' };

@@ -146,3 +146,19 @@ app.get('/current', async (req, res) => {
     }
     res.json(user);
 });
+
+app.get("/carts/:cid/purchase", async (req, res) => {
+    if(req.user.rol == "admin"){
+        res.render("profile", {
+            title: "Vista Profile Admin",
+            first_name: req.session.nomUsuario,
+            last_name: req.session.apeUsuario,
+            email: req.session.emailUsuario,
+            rol: req.session.rolUsuario,
+        });
+    }else {
+        let id = req.params.cid
+        let ticket  = await cart.purchaseCart(id, req.user)
+        res.json(ticket)
+    }
+})

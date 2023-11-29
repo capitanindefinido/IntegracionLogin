@@ -43,8 +43,8 @@ class CartRepository {
         return await this.dao.getCartWithProducts(cartId)
     }
 
-    async purchaseCart(cartId){
-        return await this.dao.purchaseCart(cartId)
+    async purchaseCart(cartId, user){
+        return await this.dao.purchaseCart(cartId, user)
     }
     
 }

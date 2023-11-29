@@ -54,7 +54,9 @@ class CartController {
     purchase = async (req, res) => {
         try {
             let cartId = req.params.cid
-            const result = await cartService.purchaseCart(cartId);
+            let user = req.params.user
+            console.log(user)
+            const result = await cartService.purchaseCart(cartId, user);
             res.json({ result });
         } catch (error) {
             res.status(500).json({ error: 'Error al finalizar la compra' });
