@@ -71,65 +71,6 @@ class ProductDaoMongo extends productsModel
         }
       }
 
-      // Obtiene un producto por Limit
-      async getProductsByLimit(limit) 
-      {
-        try 
-        {
-          const products = await ProductDaoMongo.find().limit(limit); // Aplica el límite a la consulta
-          if (products.length < limit) {
-            // Si es menor, ajusta el límite para que coincida con el número de productos disponibles
-            limit = products.length;
-          }     
-          return products;
-        } catch (error) {
-          throw error;
-        }
-      }
-      // Obtiene un producto por Page
-      async getProductsByPage(page, productsPerPage) 
-      {
-        if (page <= 0) {
-          page = 1; // Establece la página predeterminada en 1 si el número de página es menor o igual a 0
-        }
-        try {
-          const products = await ProductDaoMongo.find()
-            .skip((page - 1) * productsPerPage) // Omite los productos de las páginas anteriores
-            .limit(productsPerPage); // Limita la consulta a la cantidad de productos por página
-          return products;
-        } catch (error) {
-          throw error;
-        }
-      }
-      // Obtiene un producto por Query
-      async getProductsByQuery(query) 
-      {
-        try 
-        {
-          const products = await productsModel.find({
-            description: { $regex: query, $options: 'i' }
-          });
-          return products;
-        } catch (error) {
-          throw error;
-        }
-      }
-
-      // Obtiene un producto por Sort
-      async getProductsBySort(sortOrder) 
-      {
-        try 
-        {
-          const products = await productsModel
-          .find({})
-          .sort({ price: sortOrder }); // Ordena por precio según el sortOrder
-      
-          return products;
-        } catch (error) {
-          throw error;
-        }
-      }
-
       //Busqueda con todo lo solicitado 
       async getProductsMaster(page = 1, limit = 10, category, availability, sortOrder) 
       {

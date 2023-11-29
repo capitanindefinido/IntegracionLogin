@@ -1,55 +1,66 @@
-import CartDaoMongo from "../DAO/Mongo/CartDaoMongo.js";
+import service from "../service/service.js";
 
-const carts = new CartDaoMongo()
+const cartService = service.cartService
 
 class CartController {
     postCart = async (req,res) =>{
         let newCart = req.body
-        res.send(await carts.addCart(newCart))
+        res.send(await cartService.addCart(newCart))
     }
 
     getCarts = async (req,res)=>{
-        res.send(await carts.getCarts())
+        res.send(await cartService.getCarts())
     }
 
     getCartById = async (req,res)=>{
-        res.send(await carts.getCartById(req.params.id))
+        res.send(await cartService.getCartById(req.params.id))
     }
 
     postProductsInCart = async (req,res) => {
         let cartId = req.params.cid
         let prodId = req.params.pid
-        res.send(await carts.addProductInCart(cartId, prodId))
+        res.send(await cartService.addProductInCart(cartId, prodId))
     }
 
     deleteProductsFromCart = async (req,res) => {
         let cartId = req.params.cid
         let prodId = req.params.pid
-        res.send(await carts.removeProductFromCart(cartId, prodId))
+        res.send(await cartService.removeProductFromCart(cartId, prodId))
     }
 
     putProductsInCart = async (req,res) => {
         let cartId = req.params.cid
         let newProducts = req.body
-        res.send(await carts.updateProductsInCart(cartId, newProducts))
+        res.send(await cartService.updateProductsInCart(cartId, newProducts))
     }
 
     putProductInCart = async (req,res) => {
         let cartId = req.params.cid
         let prodId = req.params.pid
         let newProduct = req.body
-        res.send(await carts.updateProductInCart(cartId, prodId, newProduct))
+        res.send(await cartService.updateProductInCart(cartId, prodId, newProduct))
     }
 
     deleteAllProductsFromCart = async (req,res) => {
         let cartId = req.params.cid
-        res.send(await carts.removeAllProductsFromCart(cartId))
+        res.send(await cartService.removeAllProductsFromCart(cartId))
     }
 
     getCartWithProducts = async (req,res)=>{
         let cartId = req.params.cid
-        res.send(await carts.getCartWithProducts(cartId))
+        res.send(await cartService.getCartWithProducts(cartId))
     }
+
+    purchase = async (req, res) => {
+        try {
+            let cartId = req.params.cid
+            const result = await cartService.purchaseCart(cartId);
+            res.json({ result });
+        } catch (error) {
+            res.status(500).json({ error: 'Error al finalizar la compra' });
+        }
+    }
+    
 }
 
 export default CartController

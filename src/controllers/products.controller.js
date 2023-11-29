@@ -1,37 +1,47 @@
-import ProductDaoMongo from "../DAO/Mongo/ProductDaoMongo.js"
+import service from "../service/service.js";
 
 
-const product = new ProductDaoMongo()
+const serviceProduct = service.productService
+
 
 class ProductController {
 
     getProducts = async (req, res) => {
-        let sortOrder = req.query.sortOrder; 
-        let category = req.query.category; 
-        let availability = req.query.availability; 
-        if(sortOrder === undefined){
-            sortOrder = "asc"
-        }
-        if(category === undefined){
-            category = ""
-        }
-        if(availability === undefined){
-            availability = ""
-        }
-        res.send(await product.getProductsMaster(null,null,category,availability, sortOrder))
+        try {
+            let sortOrder = req.query.sortOrder; 
+            let category = req.query.category; 
+            let availability = req.query.availability; 
+            if(sortOrder === undefined){
+                sortOrder = "asc"
+            }
+            if(category === undefined){
+                category = ""
+            }
+            if(availability === undefined){
+                availability = ""
+            }
+            res.send(await serviceProduct.getProductsMaster(null,null,category,availability, sortOrder))
+        } catch (error) {
+            console.log(error)
+        } 
     }
 
     putProduct = async (req,res) => {
-        let id = req.params.id
-        let updProd = req.body
-        res.send(await product.updateProduct(id, updProd))
+        try {
+            let id = req.params.id
+            let updProd = req.body
+            res.send(await serviceProduct.updateProduct(id, updProd))
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
 
     getProductById = async (req, res) => {
         try{
             const prodId = req.params.id;
-            const productDetails = await product.getProductById(prodId);
-            res.render("viewDetails", { product: productDetails });
+            const productDetails = await serviceProduct.getProductById(prodId);
+            res.send(productDetails);
         } catch (error) {
             console.error('Error al obtener el producto:', error);
             res.status(500).json({ error: 'Error al obtener el producto' });
@@ -39,13 +49,23 @@ class ProductController {
     }
 
     deleteProduct = async (req, res) => {
-        let id = req.params.id
-        res.send(await product.delProducts(id))
+        try {
+            let id = req.params.id
+            res.send(await serviceProduct.deleteProduct(id))
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
 
     postProduct = async (req, res) => {
-        let newProduct = req.body
-        res.send(await product.addProduct(newProduct))
+        try {
+            let newProduct = req.body
+            res.send(await serviceProduct.addProduct(newProduct))
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
 
 }

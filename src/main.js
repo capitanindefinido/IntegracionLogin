@@ -68,22 +68,43 @@ app.get("/products", async (req, res) => {
     {
         return res.redirect("/login")
     }
-    let allProducts  = await product.getProducts()
-    allProducts = allProducts.map(product => product.toJSON());
-    res.render("viewProducts", {
-        title: "Vista Productos",
-        products : allProducts,
-        email: req.session.emailUsuario,
-        rol: req.session.rolUsuario,
+    if(req.user.rol == "admin"){
+        res.render("profile", {
+            title: "Vista Profile Admin",
+            first_name: req.session.nomUsuario,
+            last_name: req.session.apeUsuario,
+            email: req.session.emailUsuario,
+            rol: req.session.rolUsuario,
+        });
+    }else{
+        let allProducts  = await product.getProducts()
+        allProducts = allProducts.map(product => product.toJSON());
+        res.render("viewProducts", {
+            title: "Vista Productos",
+            products : allProducts,
+            email: req.session.emailUsuario,
+            rol: req.session.rolUsuario,
     });
+    }
+    
 })
 app.get("/carts/:cid", async (req, res) => {
-    let id = req.params.cid
-    let allCarts  = await cart.getCartWithProducts(id)
-    res.render("viewCart", {
-        title: "Vista Carro",
-        carts : allCarts
-    });
+    if(req.user.rol == "admin"){
+        res.render("profile", {
+            title: "Vista Profile Admin",
+            first_name: req.session.nomUsuario,
+            last_name: req.session.apeUsuario,
+            email: req.session.emailUsuario,
+            rol: req.session.rolUsuario,
+        });
+    }else {
+        let id = req.params.cid
+        let allCarts  = await cart.getCartWithProducts(id)
+        res.render("viewCart", {
+            title: "Vista Carro",
+            carts : allCarts
+        });
+    }
 })
 app.get("/login", async (req, res) => {
     res.render("login", {
@@ -92,7 +113,7 @@ app.get("/login", async (req, res) => {
     
 })
 app.get("/register", async (req, res) => { 
-    res.render("register", {
+        res.render("register", {
         title: "Vista Register",
     });
 })
@@ -116,3 +137,12 @@ app.get("/", async (req, res) => {
         return res.redirect("/login")
     }
 })
+app.get('/current', async (req, res) => {
+    const jwtPayload = req.user;
+    const user = {
+        "first_name": `${jwtPayload.first_name}`,
+        "last_name": `${jwtPayload.last_name}`,
+        "rol": `${jwtPayload.rol}`,
+    }
+    res.json(user);
+});

@@ -1,7 +1,9 @@
 import { cartsModel } from "../../models/carts.model.js";
 import ProductDaoMongo from "./ProductDaoMongo.js";
+import TicketDaoMongo from "./TicketDaoMongo.js";
 
 const prodAll = new ProductDaoMongo()
+const ticketAll = new TicketDaoMongo()
 
 class CartDaoMongo extends cartsModel
 {
@@ -203,6 +205,67 @@ class CartDaoMongo extends cartsModel
           console.error('Error al obtener el carrito con productos:', error);
           return 'Error al obtener el carrito con productos';
         }
-      }     
+      }    
+      
+      async purchaseCart(cartId) {
+        try {
+            const cart = await cartsModel.findById(cartId);
+    
+            if (!cart) {
+                return { error: 'Carrito no encontrado' };
+            }
+    
+            const productsNotPurchased = [];
+    
+            for (const cartItem of cart.products) {
+              try {
+                  let productId;
+                  let prod = JSON.stringify(cartItem)
+                  let prodJson = JSON.parse(prod)
+          
+                  const product = await prodAll.getProductById(prodJson.product);
+          
+                  if (!product) {
+                      console.error(`Error al procesar el producto ${prodJson.product}: Producto no encontrado`);
+                      productsNotPurchased.push(prodJson.product);
+                  } else {
+                      if (cartItem.quantity > product.stock) {
+                          productsNotPurchased.push(prodJson.product);
+                      } else {
+                          product.stock -= cartItem.quantity;
+                          await prodAll.updateProduct(product.id, product);
+                      }
+                  }
+              } catch (error) {
+                  console.error(`Error al procesar el producto ${prodJson.product}:`, error);
+                  productsNotPurchased.push(prodJson.product);
+              }
+            }
+          
+            if (productsNotPurchased.length > 0) {
+              const date = new Date(); // Obten la fecha actual
+              const totalAmount = calculateTotalAmount(productsNotPurchased); // Implementa la lógica para calcular el monto total
+              const ticketData = {
+                date,
+                amount: totalAmount,
+                purchaser: cart.userId,
+                products: productsNotPurchased.map(item => item.productId),
+              };
+        
+              // Crear un ticket con los productos no comprados
+              await ticketAll.createTicket(ticketData);
+            }
+        
+            // Actualizar el estado del carrito
+            cart.status = 'completed';
+            await cart.save();
+        
+            return productsNotPurchased;
+        } catch (error) {
+            console.error('Error al finalizar la compra:', error);
+            return { error: 'Error al finalizar la compra' };
+        }
+    }
+      
 }
 export default CartDaoMongo

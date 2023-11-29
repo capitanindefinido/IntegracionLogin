@@ -110,6 +110,5 @@ class UserDaoMongo extends usersModel
           return 'Error al obtener el usuario';
         }
       }
-      
 }
 export default UserDaoMongo;

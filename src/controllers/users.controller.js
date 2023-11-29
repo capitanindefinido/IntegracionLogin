@@ -1,6 +1,7 @@
-import UserDaoMongo from "../DAO/Mongo/UserDaoMongo.js";
+import UserDto from "../dto/users.dto.js";
+import service from "../service/service.js";
 
-const user = new UserDaoMongo()
+const userService = service.userService
 
 class UserController {
     postRegister = async (req, res) => {
