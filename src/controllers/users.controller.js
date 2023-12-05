@@ -1,5 +1,8 @@
 import UserDto from "../dto/users.dto.js";
 import service from "../service/service.js";
+import CustomError from "../errors/CustomError.js";
+import generateUserErrorInfo from "../errors/info.js";
+import EErrors from "../errors/enums.js";
 
 const userService = service.userService
 
@@ -8,7 +11,15 @@ class UserController {
         try 
         {
             const { first_name, last_name, email, age, password, rol }= req.body
-            if (!first_name || !last_name || !email || !age)  return res.status(400).send({ status: 400, error: 'Faltan datos' })
+            if (!first_name || !last_name || !email)  {
+                //return res.status(400).send({ status: 400, error: 'Faltan datos' })
+                CustomError.createError({
+                    name: 'User creation error',
+                    cause: generateUserErrorInfo({nombre, last_name, email}),
+                    message: 'Error trying to create a user',
+                    code: EErrors.INVALID_TYPE_ERROR
+                })
+            }
             res.redirect("/login")
         } catch (error) 
         {

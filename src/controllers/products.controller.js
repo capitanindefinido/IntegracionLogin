@@ -1,8 +1,10 @@
+import CustomError from "../errors/CustomError.js";
+import EErrors from "../errors/enums.js";
+import generateProductErrorInfo from "../errors/infoProducts.js";
 import service from "../service/service.js";
 
 
 const serviceProduct = service.productService
-
 
 class ProductController {
 
@@ -58,12 +60,20 @@ class ProductController {
         
     }
 
-    postProduct = async (req, res) => {
+    postProduct = async (req, res, next) => {
         try {
             let newProduct = req.body
+            if(newProduct == null){
+                CustomError.createError({
+                    name: 'Product creation error',
+                    cause: generateProductErrorInfo(newProduct),
+                    message: 'Error trying to create a product, invalid request',
+                    code: EErrors.INVALID_REQUEST
+                })
+            }
             res.send(await serviceProduct.addProduct(newProduct))
         } catch (error) {
-            console.log(error)
+            next(error)
         }
         
     }

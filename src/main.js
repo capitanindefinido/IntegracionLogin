@@ -13,6 +13,8 @@ import FileStore from 'session-file-store'
 import passport from "passport"
 import initializePassword from "./config/passport.config.js"
 import configObject from "./config/config.js"
+import pruebasRouter from "./router/pruebas.router.js"
+import errorHandleMidd from "./errors/index.js"
 
 const app = express()
 const fileStorage = FileStore(session)
@@ -49,12 +51,15 @@ app.use(
 app.use("/api/products", prodRouter)
 app.use("/api/carts", cartRouter)
 app.use("/api/sessions", userRouter)
+app.use("/api/pruebas", pruebasRouter)
 
 //------------------------Passport------------------------------------//
 
 initializePassword()
 app.use(passport.initialize())
 app.use(passport.session())
+
+app.use(errorHandleMidd)
 
 //------------------------Handlebars----------------------------------//
 app.engine("handlebars", engine())
