@@ -15,6 +15,9 @@ import initializePassword from "./config/passport.config.js"
 import configObject from "./config/config.js"
 import pruebasRouter from "./router/pruebas.router.js"
 import errorHandleMidd from "./errors/index.js"
+import { error } from "console"
+import addLogger, { logger } from "./utils/loggers.js"
+
 
 const app = express()
 const fileStorage = FileStore(session)
@@ -26,7 +29,7 @@ app.use(express.urlencoded({extended: false}))
 //---------------------------Puerto------------------------------------//
 
 app.listen(configObject.port, () => {
-  console.log(`Servidor Express Puerto ${configObject.port}`)
+    logger.info(`Servidor Express Puerto ${configObject.port}`)
 })
 
 //-----------------------Session Mongo Atlas---------------------------//
@@ -47,7 +50,7 @@ app.use(
   );
 
 //---------------------------Rutas------------------------------------//
-
+app.use(addLogger)
 app.use("/api/products", prodRouter)
 app.use("/api/carts", cartRouter)
 app.use("/api/sessions", userRouter)

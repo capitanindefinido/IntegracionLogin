@@ -1,4 +1,5 @@
 import { ticketsModel } from "../../models/ticket.model.js";
+import { logger } from "../../utils/loggers.js";
 
 class TicketDaoMongo {
     constructor() {}
@@ -6,10 +7,10 @@ class TicketDaoMongo {
     async createTicket(ticketData) {
         try {
             await ticketsModel.create(ticketData);
-            console.log('Ticket creado con éxito');
+            logger.info('Ticket creado con éxito');
             return 'Ticket creado con éxito';
         } catch (error) {
-            console.error('Error al crear el ticket:', error);
+            logger.info('Error al crear el ticket:', error);
             return 'Error al crear el ticket';
         }
     }

@@ -3,6 +3,7 @@ import local from "passport-local";
 import { createHash, isValidPassword } from "../utils.js";
 import UserDaoMongo from "../DAO/Mongo/UserDaoMongo.js";
 import GitHubStrategy from "passport-github2";
+import { logger } from "../utils/loggers.js";
 
 const LocalStrategy = local.Strategy;
 const userMan = new UserDaoMongo();
@@ -17,7 +18,7 @@ const initializePassword = () => {
         try {
           let user = await userMan.findEmail({ email: username });
           if (user) {
-            console.log("El usuario ya existe");
+            logger.info("El usuario ya existe");
             return done(null, false);
           }
 
@@ -55,7 +56,7 @@ const initializePassword = () => {
         try {
           const user = await userMan.findEmail({ email: username });
           if (!user) {
-            console.log("Usuario no existe");
+            logger.info("Usuario no existe");
             return done(null, false);
           }
           if (!isValidPassword(user, password)) return done(null, false);

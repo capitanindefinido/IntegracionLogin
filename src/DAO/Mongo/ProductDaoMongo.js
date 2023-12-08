@@ -1,4 +1,5 @@
 import { productsModel } from "../../models/products.model.js";
+import { logger } from "../../utils/loggers.js";
 
 class ProductDaoMongo extends productsModel
 {
@@ -14,7 +15,7 @@ class ProductDaoMongo extends productsModel
             await productsModel.create(productData);
             return 'Producto agregado';
           } catch (error) {
-            console.error('Error al agregar el producto:', error);
+            logger.info('Error al agregar el producto:', error);
             return 'Error al agregar el producto';
           }
         }

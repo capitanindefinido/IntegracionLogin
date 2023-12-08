@@ -14,4 +14,10 @@ pruebasRouter.get('/mockingProducts', (req, res) => {
     })
 })
 
+pruebasRouter.get('/loggerTest', (req, res) => {
+    //req.logger.warning('Warning ojo')
+    req.logger.fatal('Error fatal')
+    res.send('ejecutando el warning')
+})
+
 export default pruebasRouter

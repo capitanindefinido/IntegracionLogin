@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import program from '../utils/commander.js';
 import mongoose from 'mongoose';
+import { logger } from '../utils/loggers.js';
 
 
 const {mode} = program.opts()
@@ -19,10 +20,10 @@ mongoose
     `${configObject.mongo_url}/?retryWrites=true&w=majority`,
   )
   .then(() => {
-    console.log("Conectado a la base de datos");
+    logger.info("Conectado a la base de datos");
   })
   .catch((error) => {
-    console.error("Error al conectarse a la base de datos, error" + error);
+    logger.error("Error al conectarse a la base de datos, error" + error);
   });
 
 

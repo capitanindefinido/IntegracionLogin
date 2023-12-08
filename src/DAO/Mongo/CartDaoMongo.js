@@ -1,5 +1,6 @@
 import UserDto from "../../dto/users.dto.js";
 import { cartsModel } from "../../models/carts.model.js";
+import { logger } from "../../utils/loggers.js";
 import ProductDaoMongo from "./ProductDaoMongo.js";
 import TicketDaoMongo from "./TicketDaoMongo.js";
 
@@ -25,7 +26,7 @@ class CartDaoMongo extends cartsModel
         } 
         catch (error) 
         {
-          console.error('Error al obtener los carritos:', error);
+          logger.error('Error al obtener los carritos:', error);
           return [];
         }
       }
@@ -36,7 +37,7 @@ class CartDaoMongo extends cartsModel
           await cartsModel.create(cartData);
           return 'Carrito agregado';
         } catch (error) {
-          console.error('Error al agregar el carrito:', error);
+          logger.error('Error al agregar el carrito:', error);
           return 'Error al agregar el carrito';
         }
       }
@@ -54,7 +55,7 @@ class CartDaoMongo extends cartsModel
         } 
         catch (error) 
         {
-          console.error('Error al obtener el carrito:', error);
+          logger.error('Error al obtener el carrito:', error);
           return 'Error al obtener el carrito';
         }
       }
@@ -90,7 +91,7 @@ class CartDaoMongo extends cartsModel
           await cart.save();
           return 'Producto agregado al carrito';
         } catch (error) {
-          console.error('Error al agregar el producto al carrito:', error);
+          logger.error('Error al agregar el producto al carrito:', error);
           return 'Error al agregar el producto al carrito';
         }
       }
@@ -120,7 +121,7 @@ class CartDaoMongo extends cartsModel
             return 'Producto no encontrado en el carrito';
           }
         } catch (error) {
-          console.error('Error al eliminar el producto del carrito:', error);
+          logger.error('Error al eliminar el producto del carrito:', error);
           return 'Error al eliminar el producto del carrito';
         }
       }
@@ -141,7 +142,7 @@ class CartDaoMongo extends cartsModel
           await cart.save();
           return 'Carrito actualizado con nuevos productos';
         } catch (error) {
-          console.error('Error al actualizar el carrito con nuevos productos:', error);
+          logger.error('Error al actualizar el carrito con nuevos productos:', error);
           return 'Error al actualizar el carrito con nuevos productos';
         }
       }
@@ -168,7 +169,7 @@ class CartDaoMongo extends cartsModel
           await cart.save();
           return 'Producto actualizado en el carrito';
         } catch (error) {
-          console.error('Error al actualizar el producto en el carrito:', error);
+          logger.error('Error al actualizar el producto en el carrito:', error);
           return 'Error al actualizar el producto en el carrito';
         }
       }
@@ -187,7 +188,7 @@ class CartDaoMongo extends cartsModel
           
           return 'Todos los productos han sido eliminados del carrito';
         } catch (error) {
-          console.error('Error al eliminar los productos del carrito:', error);
+          logger.error('Error al eliminar los productos del carrito:', error);
           return 'Error al eliminar los productos del carrito';
         }
       }
@@ -203,7 +204,7 @@ class CartDaoMongo extends cartsModel
       
           return cart;
         } catch (error) {
-          console.error('Error al obtener el carrito con productos:', error);
+          logger.error('Error al obtener el carrito con productos:', error);
           return 'Error al obtener el carrito con productos';
         }
       }    
@@ -226,7 +227,7 @@ class CartDaoMongo extends cartsModel
                   let prodId = prodJson.productId
                   let product = await prodAll.getProductById(prodId);
                   if (!product) {
-                      console.error(`Error al procesar el producto ${prodId}: Producto no encontrado`);
+                    logger.error(`Error al procesar el producto ${prodId}: Producto no encontrado`);
                       productsNotPurchased.push(prodId);
                   } else {
                       if (prodJson.quantity > product.stock) {
@@ -242,7 +243,7 @@ class CartDaoMongo extends cartsModel
                   let prod = JSON.stringify(cartItem)
                   let prodJson = JSON.parse(prod)
                   let prodId = prodJson.productId
-                  console.error(`Error al procesar el producto ${prodId}:`, error);
+                  logger.error(`Error al procesar el producto ${prodId}:`, error);
                   productsNotPurchased.push(prodId);
               }
             }
@@ -258,7 +259,7 @@ class CartDaoMongo extends cartsModel
         
               // Crear un ticket con los productos no comprados
               const ticket = await ticketAll.createTicket(ticketData);
-              console.log(ticket)
+              logger.info(ticket)
               cart.status = 'completed';
               await cart.save();
               
@@ -271,7 +272,7 @@ class CartDaoMongo extends cartsModel
             }
             
         } catch (error) {
-            console.error('Error al finalizar la compra:', error);
+          logger.error('Error al finalizar la compra:', error);
             return { error: 'Error al finalizar la compra' };
         }
     }

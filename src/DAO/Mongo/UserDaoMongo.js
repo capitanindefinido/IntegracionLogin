@@ -1,4 +1,5 @@
 import { usersModel } from "../../models/users.model.js";
+import { logger } from "../../utils/loggers.js";
 
 class UserDaoMongo extends usersModel
 {
@@ -14,7 +15,7 @@ class UserDaoMongo extends usersModel
             let userCreate = await usersModel.create(userData);
             return userCreate
           } catch (error) {
-            console.error('Error al agregar el usuario:', error);
+            logger.error('Error al agregar el usuario:', error);
             return 'Error al agregar el usuario';
           }
       }
@@ -34,7 +35,7 @@ class UserDaoMongo extends usersModel
           await user.save();
           return 'Usuario actualizado';
         } catch (error) {
-          console.error('Error al actualizar el usuario:', error);
+          logger.error('Error al actualizar el usuario:', error);
           return 'Error al actualizar el usuario';
         }
       }
@@ -47,7 +48,7 @@ class UserDaoMongo extends usersModel
           const users = await UserDaoMongo.find({});
           return users;
         } catch (error) {
-          console.error('Error al obtener los usuarios:', error);
+          logger.error('Error al obtener los usuarios:', error);
           return [];
         }
       }
@@ -66,7 +67,7 @@ class UserDaoMongo extends usersModel
           }   
           return user;
         } catch (error) {
-          console.error('Error al obtener el usuario:', error);
+          logger.error('Error al obtener el usuario:', error);
           return 'Error al obtener el usuario';
         }
       }
@@ -83,7 +84,7 @@ class UserDaoMongo extends usersModel
           await user.remove();
           return 'Usuario eliminado';
         } catch (error) {
-          console.error('Error al eliminar el usuario:', error);
+          logger.error('Error al eliminar el usuario:', error);
           return 'Error al eliminar el usuario';
         }
       }
@@ -97,7 +98,7 @@ class UserDaoMongo extends usersModel
       
           return user;
         } catch (error) {
-          console.error('Error al validar usuario', error);
+          logger.error('Error al validar usuario', error);
           return 'Error al obtener el usuario';
         }
       }
@@ -106,7 +107,7 @@ class UserDaoMongo extends usersModel
           const user = await UserDaoMongo.findOne(param)    
           return user
         } catch (error) {
-          console.error('Error al validar usuario', error);
+          logger.error('Error al validar usuario', error);
           return 'Error al obtener el usuario';
         }
       }

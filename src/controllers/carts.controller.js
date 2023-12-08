@@ -1,4 +1,5 @@
 import service from "../service/service.js";
+import { logger } from "../utils/loggers.js";
 
 const cartService = service.cartService
 
@@ -55,7 +56,7 @@ class CartController {
         try {
             let cartId = req.params.cid
             let user = req.params.user
-            console.log(user)
+            logger.info(user)
             const result = await cartService.purchaseCart(cartId, user);
             res.json({ result });
         } catch (error) {

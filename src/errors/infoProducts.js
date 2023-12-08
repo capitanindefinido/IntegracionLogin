@@ -1,5 +1,7 @@
+import { logger } from "../utils/loggers.js"
+
 const generateProductErrorInfo = (product) => {
-    console.log(product)
+    logger.info(product)
     return `
         One or more properties where incomplete or not valid
         List of require properties:

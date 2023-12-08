@@ -2,6 +2,7 @@ import CustomError from "../errors/CustomError.js";
 import EErrors from "../errors/enums.js";
 import generateProductErrorInfo from "../errors/infoProducts.js";
 import service from "../service/service.js";
+import { logger } from "../utils/loggers.js";
 
 
 const serviceProduct = service.productService
@@ -24,7 +25,7 @@ class ProductController {
             }
             res.send(await serviceProduct.getProductsMaster(null,null,category,availability, sortOrder))
         } catch (error) {
-            console.log(error)
+            logger.info(error)
         } 
     }
 
@@ -34,7 +35,7 @@ class ProductController {
             let updProd = req.body
             res.send(await serviceProduct.updateProduct(id, updProd))
         } catch (error) {
-            console.log(error)
+            logger.log(error)
         }
         
     }
@@ -45,7 +46,7 @@ class ProductController {
             const productDetails = await serviceProduct.getProductById(prodId);
             res.send(productDetails);
         } catch (error) {
-            console.error('Error al obtener el producto:', error);
+            logger.error('Error al obtener el producto:', error);
             res.status(500).json({ error: 'Error al obtener el producto' });
         } 
     }
@@ -55,7 +56,7 @@ class ProductController {
             let id = req.params.id
             res.send(await serviceProduct.deleteProduct(id))
         } catch (error) {
-            console.log(error)
+            logger.log(error)
         }
         
     }

@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { logger } from "./loggers.js";
 
 const program = new Command();
 
@@ -7,7 +8,7 @@ program
     .option('-p <port>', 'Variable para el puerto', 4000)
     .option('--mode <mode>', 'Modo de ejecución de la app', 'development')
     .parse()
-console.log('Options: ', program.opts())
-console.log('Remaining arguments: ', program.args)
+logger.info('Options: ', program.opts())
+logger.info('Remaining arguments: ', program.args)
 
 export default program
