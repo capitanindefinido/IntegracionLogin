@@ -17,6 +17,8 @@ import pruebasRouter from "./router/pruebas.router.js"
 import errorHandleMidd from "./errors/index.js"
 import { error } from "console"
 import addLogger, { logger } from "./utils/loggers.js"
+import {usersModel} from "./models/users.model.js"; 
+
 
 
 const app = express()
@@ -170,3 +172,16 @@ app.get("/carts/:cid/purchase", async (req, res) => {
         res.json(ticket)
     }
 })
+
+app.get('/reset/:token', async (req, res) => {
+    const { token } = req.params;
+    const user = await usersModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+  
+    if (!user) {
+      return res.status(404).send('Token no válido o ha expirado');
+    }
+    res.render('reset-password', { token });
+  });
